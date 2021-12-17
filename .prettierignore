@@ -1,0 +1,12 @@
+.vscode/
+.github/
+dist/
+node_modules/
+
+*.json
+*.js
+*.yml
+*.yaml
+*.json
+*.md
+*.env

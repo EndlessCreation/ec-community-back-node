@@ -40,3 +40,4 @@ lerna-debug.log*
 !.env.example
 
 .DS_Store
+db
