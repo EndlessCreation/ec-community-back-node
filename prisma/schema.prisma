@@ -8,16 +8,16 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  year     Int
+  id       Int      @id @default(autoincrement())
+  year     Int?
   name     String
-  email    String  @unique
-  isActive Boolean @map("is_active")
-  role     String
+  email    String   @unique
+  isActive Boolean? @map("is_active")
   image    String?
 
   userProject UserProject[]
   UserSkill   UserSkill[]
+  UserRole    UserRole[]
 
   @@map("user")
 }
@@ -47,6 +47,16 @@ model Project {
   @@map("project")
 }
 
+model Role {
+  name     String
+  isAdmin  Boolean @map("is_admin")
+  isLeader Boolean @map("is_leader")
+
+  userRole UserRole[]
+
+  @@id(name)
+}
+
 model UserProject {
   userId    Int @unique @map("user_id")
   projectId Int @unique @map("project_id")
@@ -67,6 +77,17 @@ model UserSkill {
 
   @@unique([userId, skillId], name: "user_skill_pk")
   @@map("user_skill")
+}
+
+model UserRole {
+  userId Int    @unique @map("user_id")
+  role   String @unique @map("role_id")
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Role Role @relation(fields: [role], references: [name], onDelete: Cascade)
+
+  @@unique([userId, role], name: "user_role_pk")
+  @@map("user_role")
 }
 
 enum ProjectCategory {
