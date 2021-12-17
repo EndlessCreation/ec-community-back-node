@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  year     Int
+  name     String
+  email    String  @unique
+  isActive Boolean @map("is_active")
+  role     String
+  image    String?
+
+  userProject UserProject[]
+  UserSkill   UserSkill[]
+
+  @@map("user")
+}
+
+model Skill {
+  id   Int    @id @default(autoincrement())
+  name String
+
+  UserSkill UserSkill[]
+
+  @@map("skill")
+}
+
+model Project {
+  id          Int             @id @default(autoincrement())
+  title       String
+  category    ProjectCategory
+  status      ProjectCategory
+  startDate   DateTime?       @map("start_date")
+  endDate     DateTime?       @map("end_date")
+  image       String
+  source      String
+  description String          @db.Text
+
+  UserProject UserProject[]
+
+  @@map("project")
+}
+
+model UserProject {
+  userId    Int @unique @map("user_id")
+  projectId Int @unique @map("project_id")
+
+  User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, projectId], name: "user_project_pk")
+  @@map("user_project")
+}
+
+model UserSkill {
+  userId  Int @unique @map("user_id")
+  skillId Int @unique @map("skill_id")
+
+  User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skillId], name: "user_skill_pk")
+  @@map("user_skill")
+}
+
+enum ProjectCategory {
+  STUDY
+  COMPETITION
+  ADVANCE
+}
+
+enum ProjectStatus {
+  RECRUIT
+  PROGRESS
+  FINISH
+}

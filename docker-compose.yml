@@ -4,15 +4,18 @@ services:
     container_name: mysql
     image: mysql:8
     ports:
-      - '23306:3306'
+      - '13306:3306'
     environment: # -e 옵션
-      - MYSQL_DATABASE=moyea_run
-      - MYSQL_ROOT_PASSWORD=root
-    command: # 명령어 실행
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_unicode_ci
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
     volumes:
-      - ./db/mysql:/var/lib/mysql # -v 옵션 (다렉토리 마운트 설정)
+      - ./db/conf.d:/etc/mysql/conf.d
+      - ./db/data:/var/lib/mysql
+      - ./db/initdb.d:/docker-entrypoint-initdb.d
   redis:
     image: redis
     container_name: redis
@@ -21,16 +24,13 @@ services:
     restart: on-failure
   main-server:
     container_name: main-server
-    build: ./MoyeoRun_Main
-    command: ./entrypoint.dev.sh
+    build: .
+    command: sh -c "./entrypoint.dev.sh"
     volumes:
-      - ./MoyeoRun_Main:/app
+      - .:/app
     ports:
       - 3000:3000
     depends_on:
       - mysql
       - redis
       - mongo
-    environment:
-      - PORT=3000
-      - NODE_ENV=dev
