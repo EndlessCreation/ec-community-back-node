@@ -10,7 +10,7 @@ datasource db {
 model User {
   id       Int      @id @default(autoincrement())
   year     Int?
-  name     String
+  name     String?
   email    String   @unique
   isActive Boolean? @map("is_active")
   image    String?
@@ -48,45 +48,44 @@ model Project {
 }
 
 model Role {
+  id       Int     @id @default(autoincrement())
   name     String
   isAdmin  Boolean @map("is_admin")
   isLeader Boolean @map("is_leader")
 
   userRole UserRole[]
-
-  @@id(name)
 }
 
 model UserProject {
-  userId    Int @unique @map("user_id")
-  projectId Int @unique @map("project_id")
+  userId    Int @map("user_id")
+  projectId Int @map("project_id")
 
   User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   Project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, projectId], name: "user_project_pk")
+  @@id([userId, projectId], name: "user_project_pk")
   @@map("user_project")
 }
 
 model UserSkill {
-  userId  Int @unique @map("user_id")
-  skillId Int @unique @map("skill_id")
+  userId  Int @map("user_id")
+  skillId Int @map("skill_id")
 
   User  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   Skill Skill @relation(fields: [skillId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, skillId], name: "user_skill_pk")
+  @@id([userId, skillId], name: "user_skill_pk")
   @@map("user_skill")
 }
 
 model UserRole {
-  userId Int    @unique @map("user_id")
-  role   String @unique @map("role_id")
+  userId Int @map("user_id")
+  roleId Int @map("role_id")
 
   User User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Role Role @relation(fields: [role], references: [name], onDelete: Cascade)
+  Role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, role], name: "user_role_pk")
+  @@id([userId, roleId], name: "user_role_pk")
   @@map("user_role")
 }
 

@@ -2,16 +2,16 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
 export class UserResponse {
-  @ApiPropertyOptional()
+  @ApiProperty()
   id: number;
 
   @ApiPropertyOptional()
   year?: number;
 
-  @ApiProperty()
-  name: string;
-
   @ApiPropertyOptional()
+  name?: string;
+
+  @ApiProperty()
   email: string;
 
   @ApiPropertyOptional()

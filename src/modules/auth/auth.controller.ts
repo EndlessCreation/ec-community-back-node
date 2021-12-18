@@ -1,34 +1,37 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiBody } from '@nestjs/swagger';
-import { User } from 'src/decorators/auth.decorators';
-import { GoogleOauthGuard } from 'src/guards/google-oauth.guard';
-import { KakaoOauthGuard } from 'src/guards/kakao-oauth.guard';
+import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { StatusResponse } from 'src/common/dto/status-response.dto';
+import { RoleType } from 'src/constants/role-type';
+import { Auth } from 'src/decorators/auth.decorators';
+import { User } from 'src/decorators/user.decorators';
 import { UserResponse } from '../user/dto/user-response.dto';
-import { AuthResponse } from './dto/auth-response.dto';
-import { OauthRequest } from './dto/oauth-request.dto';
-import { OauthService } from './services/oauth.service';
+import { UserUpdateRequest } from '../user/dto/user-update-request.dto';
+import { AuthService } from './auth.service';
 
 @Controller('auth')
+@ApiTags('Auth')
 export class AuthController {
-  constructor(private oauthService: OauthService) {}
+  constructor(private authService: AuthService) {}
 
-  @ApiBody({ type: OauthRequest })
-  @UseGuards(KakaoOauthGuard)
-  @Post('kakao')
-  async kakao(@User() user: UserResponse): Promise<AuthResponse> {
-    return this.oauthService.authentication(user);
+  @Post('')
+  @Auth([RoleType.NON_REGISTERED])
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '유저 가입 신청',
+    type: UserResponse,
+  })
+  async join(@User() user: UserResponse, @Body() data: UserUpdateRequest): Promise<UserResponse> {
+    return this.authService.join(user, data);
   }
 
-  @ApiBody({ type: OauthRequest })
-  @UseGuards(GoogleOauthGuard)
-  @Post('google')
-  async google(@User() user: UserResponse): Promise<AuthResponse> {
-    return this.oauthService.authentication(user);
-  }
-
-  @ApiBody({ type: OauthRequest })
-  @Post('test')
-  async test(@Body() data: any): Promise<any> {
-    return this.oauthService.kakaoGetUser(data.accessToken);
+  @Delete('')
+  @Auth([RoleType.MEMBER])
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '유저 본인 탈퇴',
+    type: StatusResponse,
+  })
+  async leave(@User() user: UserResponse): Promise<any> {
+    return this.authService.leave(user);
   }
 }

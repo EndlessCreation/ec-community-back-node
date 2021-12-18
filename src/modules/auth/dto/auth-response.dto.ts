@@ -1,12 +1,13 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { TokenDto } from './token.dto';
+import { StatusType } from 'src/constants/status-type';
+import { TokenResponse } from './token-response.dto';
 
-export class AuthResponse extends TokenDto {
+export class AuthResponse extends TokenResponse {
   @ApiPropertyOptional()
-  isNew?: boolean;
+  status: StatusType;
 
-  constructor(data: { expiresIn: number; accessToken: string }, isNew?: boolean) {
+  constructor(data: { expiresIn: number; accessToken: string }, status: StatusType) {
     super(data);
-    this.isNew = isNew;
+    this.status = status;
   }
 }

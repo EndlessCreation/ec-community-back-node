@@ -3,23 +3,22 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Request } from 'express';
 import { Strategy } from 'passport-custom';
 import { OauthResponse } from '../dto/oauth-response.dto';
-import { OauthService } from '../services/oauth.service';
+import { OauthService } from '../oauth.service';
 
 @Injectable()
-export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
+export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
   constructor(private oauthService: OauthService) {
     super();
   }
 
   async validate(req: Request): Promise<OauthResponse> {
-    const user = await this.oauthService.googleGetUser(req.body.accessToken);
+    const user = await this.oauthService.kakaoGetUser(req.body.accessToken);
     if (!user) {
       throw new UnauthorizedException();
     }
 
     return {
-      name: user.name,
-      email: user.email,
+      email: user.kakao_account.email,
     };
   }
 }

@@ -14,10 +14,27 @@ export class UserRepository {
     return this.prisma.user.findUnique({ where: uniqueInput });
   }
 
-  async updateByEmail(email: Prisma.UserWhereUniqueInput, userUpdateInput: Prisma.UserUpdateInput): Promise<User | null> {
+  async findWithRoles(uniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: uniqueInput,
+      include: {
+        UserRole: {
+          select: {
+            Role: true,
+          },
+        },
+      },
+    });
+  }
+
+  async updateByUnique(uniqueInput: Prisma.UserWhereUniqueInput, userUpdateInput: Prisma.UserUpdateInput): Promise<User | null> {
     return this.prisma.user.update({
-      where: email,
+      where: uniqueInput,
       data: userUpdateInput,
     });
+  }
+
+  async deleteByUnique(uniqueInput: Prisma.UserWhereUniqueInput): Promise<User> {
+    return this.prisma.user.delete({ where: uniqueInput });
   }
 }

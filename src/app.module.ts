@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './modules/auth/auth.module';
+import { OauthModule } from './modules/oauth/oauth.module';
+import { RoleModule } from './modules/role/role.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { SharedModule } from './shared/shared.module';
 
@@ -13,6 +15,8 @@ import { SharedModule } from './shared/shared.module';
     SharedModule,
     PrismaModule,
     AuthModule,
+    OauthModule,
+    RoleModule,
   ],
 })
 export class AppModule {}

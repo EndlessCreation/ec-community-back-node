@@ -9,7 +9,7 @@ export class UserService {
   constructor(private userRepository: UserRepository) {}
 
   async updateProfile(user: User, updateUserRequest: UserUpdateRequest): Promise<UserResponse> {
-    return this.userRepository.updateByEmail({ id: user.id }, updateUserRequest);
+    return this.userRepository.updateByUnique({ id: user.id }, updateUserRequest);
   }
 
   async findByEmail(user: User): Promise<UserResponse> {
