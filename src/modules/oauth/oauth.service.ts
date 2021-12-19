@@ -56,11 +56,13 @@ export class OauthService {
       email: userRequest.email,
     });
 
-    if (user == undefined || user.year == null) {
+    if (user == undefined) {
       status = StatusType.AUTH;
       user = await this.userRepository.create(userRequest);
+    } else if (user.year == null) {
+      status = StatusType.AUTH;
     } else {
-      const userWithRole = await this.roleRepository.findAllWithUserRoleByUser(user);
+      const userWithRole = await this.roleRepository.findAllWithUserRoleByUser(user.id);
       status = userWithRole.length ? StatusType.LOGIN : StatusType.WAIT;
     }
 

@@ -32,8 +32,8 @@ export class AuthService {
     return new UserResponse(updatedUser);
   }
 
-  async leave(user: UserResponse): Promise<StatusResponse> {
-    await this.userRepository.deleteByUnique({ id: user.id });
+  async leaveOrKicked(userId: number): Promise<StatusResponse> {
+    await this.userRepository.deleteByUnique({ id: userId });
 
     return new StatusResponse(true);
   }

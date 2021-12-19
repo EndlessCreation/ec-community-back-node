@@ -3,6 +3,7 @@ import { StatusResponse } from 'src/common/dto/status-response.dto';
 import { RoleRepository } from 'src/repositories/role.repository';
 import { UserRoleRepository } from 'src/repositories/user-role.repository';
 import { RoleListResponse } from './dto/role-list-response.dto';
+import { RoleManageRequest } from './dto/role-manage-request.dto';
 import { RoleRequest } from './dto/role-request.dto';
 import { RoleResponse } from './dto/role-response.dto';
 
@@ -18,6 +19,16 @@ export class RoleService {
   async getList(): Promise<RoleListResponse> {
     const roles = await this.roleRepository.findAll();
     return new RoleListResponse(roles);
+  }
+
+  async manage(userId: number, data: RoleManageRequest): Promise<StatusResponse> {
+    await this.userRoleRepository.deleteAll(userId);
+    const bulkData: Array<{ userId: number; roleId: number }> = data.roleList.map((role) => {
+      return { userId, roleId: role };
+    });
+    await this.userRoleRepository.createAll(bulkData);
+
+    return new StatusResponse(true);
   }
 
   async edit(roleId: number, data: RoleRequest): Promise<RoleResponse> {

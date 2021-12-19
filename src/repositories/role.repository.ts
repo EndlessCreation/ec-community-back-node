@@ -15,15 +15,13 @@ export class RoleRepository {
     return this.prisma.role.findMany();
   }
 
-  async findAllWithUserRoleByUser(user: Prisma.UserWhereUniqueInput): Promise<Role[]> {
+  async findAllWithUserRoleByUser(userId: number): Promise<Role[]> {
     return this.prisma.role.findMany({
-      include: {
-        userRole: { where: { User: user } },
-      },
+      where: { UserRole: { some: { userId } } },
     });
   }
 
-  async updateByUnique(roleUnique: Prisma.RoleWhereUniqueInput, data: RoleRequest): Promise<Role> {
+  updateByUnique(roleUnique: Prisma.RoleWhereUniqueInput, data: RoleRequest): Promise<Role> {
     return this.prisma.role.update({
       where: roleUnique,
       data,

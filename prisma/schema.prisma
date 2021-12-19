@@ -53,7 +53,8 @@ model Role {
   isAdmin  Boolean @map("is_admin")
   isLeader Boolean @map("is_leader")
 
-  userRole UserRole[]
+  UserRole UserRole[]
+  @@map("role")
 }
 
 model UserProject {

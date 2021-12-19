@@ -7,6 +7,7 @@ import * as express from 'express';
 import RateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { join } from 'path';
 import { AppModule } from './app.module';
 import { AxiosExceptionFilter } from './filters/axios-exception.filter';
 import { HttpExceptionFilter } from './filters/bad-request.filter';
@@ -33,6 +34,9 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   app.enableVersioning();
 
   const reflector = app.get(Reflector);
+  app.useStaticAssets(join(__dirname, '../../public'), {
+    prefix: '/public/',
+  });
 
   app.useGlobalFilters(new AxiosExceptionFilter(reflector), new HttpExceptionFilter(reflector), new PrismaClientExceptionFilter(reflector));
 

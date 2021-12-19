@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@prisma/client';
+import { Prisma, Role, Skill, User } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -14,13 +14,47 @@ export class UserRepository {
     return this.prisma.user.findUnique({ where: uniqueInput });
   }
 
-  async findWithRoles(uniqueInput: Prisma.UserWhereUniqueInput): Promise<User | null> {
+  async findWithRolesAndSkills(
+    uniqueInput: Prisma.UserWhereUniqueInput
+  ): Promise<(User & { UserRole: { Role: Role }[] } & { UserSkill: { Skill: Skill }[] }) | null> {
     return this.prisma.user.findUnique({
       where: uniqueInput,
       include: {
         UserRole: {
           select: {
             Role: true,
+          },
+        },
+        UserSkill: {
+          select: {
+            Skill: true,
+          },
+        },
+      },
+    });
+  }
+
+  async findAllByWhereOptionOrderByOrderOption(
+    pagination,
+    whereOption,
+    orderOption
+  ): Promise<(User & { UserRole: { Role: Role }[] } & { UserSkill: { Skill: Skill }[] })[] | null> {
+    return await this.prisma.user.findMany({
+      skip: pagination.skip,
+      take: pagination.take,
+      where: {
+        AND: whereOption,
+      },
+      orderBy: orderOption,
+      include: {
+        UserRole: {
+          select: {
+            Role: true,
+          },
+        },
+        UserSkill: {
+          select: {
+            Skill: true,
           },
         },
       },

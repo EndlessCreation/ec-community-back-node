@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Delete, HttpStatus, Param, Post } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { StatusResponse } from 'src/common/dto/status-response.dto';
 import { RoleType } from 'src/constants/role-type';
@@ -32,6 +32,17 @@ export class AuthController {
     type: StatusResponse,
   })
   async leave(@User() user: UserResponse): Promise<any> {
-    return this.authService.leave(user);
+    return this.authService.leaveOrKicked(user.id);
+  }
+
+  @Delete(':id')
+  @Auth([RoleType.ADMIN])
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '유저 본인 탈퇴',
+    type: StatusResponse,
+  })
+  async kicked(@Param('id') userId: number) {
+    return this.authService.leaveOrKicked(userId);
   }
 }

@@ -4,6 +4,7 @@ import { StatusResponse } from 'src/common/dto/status-response.dto';
 import { RoleType } from 'src/constants/role-type';
 import { Auth } from 'src/decorators/auth.decorators';
 import { RoleListResponse } from './dto/role-list-response.dto';
+import { RoleManageRequest } from './dto/role-manage-request.dto';
 import { RoleRequest } from './dto/role-request.dto';
 import { RoleResponse } from './dto/role-response.dto';
 import { RoleService } from './role.service';
@@ -30,9 +31,21 @@ export class RoleController {
     status: HttpStatus.OK,
     description: '역할 리스트',
     type: RoleListResponse,
+    isArray: true,
   })
   async getList(): Promise<RoleListResponse> {
     return this.roleService.getList();
+  }
+
+  @Patch('/manage/:userId')
+  @Auth([RoleType.ADMIN])
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: '역할 관리',
+    type: RoleResponse,
+  })
+  async manage(@Param('userId') userId: number, @Body() data: RoleManageRequest): Promise<StatusResponse> {
+    return this.roleService.manage(userId, data);
   }
 
   @Patch(':id')
