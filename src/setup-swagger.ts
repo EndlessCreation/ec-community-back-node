@@ -3,7 +3,10 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { version } from '../package.json';
 
 export function setupSwagger(app: INestApplication): void {
-  const options = new DocumentBuilder().setTitle('API').setVersion(version).addBearerAuth().build();
+  let options = new DocumentBuilder().setTitle('EC Community').setVersion(version).addBearerAuth().build();
+  if (process.env.NODE_ENV === 'production') {
+    options = new DocumentBuilder().setTitle('EC Community').addServer('/api').setVersion(version).addBearerAuth().build();
+  }
 
   const document = SwaggerModule.createDocument(app, options);
   SwaggerModule.setup('documentation', app, document, {
